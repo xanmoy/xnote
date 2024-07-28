@@ -1,0 +1,46 @@
+// {
+//     "configurations": [
+//         {
+//             "name": "Linux",
+//             "includePath": [
+//                 "${workspaceFolder}/**"
+//             ],
+//             "defines": [],
+//             "compilerPath": "/usr/bin/clang",
+//             "cStandard": "c17",
+//             "cppStandard": "c++17",
+//             "intelliSenseMode": "linux-clang-x64"
+//         }
+//     ],
+//     "version": 4
+// }
+
+
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/include/gtk-3.0",
+                "/usr/include/glib-2.0",
+                "/usr/lib/glib-2.0/include",
+                "/usr/include/cairo",
+                "/usr/include/pango-1.0",
+                "/usr/include/harfbuzz",
+                "/usr/include/pixman-1",
+                "/usr/include/freetype2",
+                "/usr/include/libpng16",
+                "/usr/include/gdk-pixbuf-2.0",
+                "/usr/include/libmount",
+                "/usr/include/blkid"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}
