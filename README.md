@@ -1,7 +1,7 @@
 # xNote
-![xNote](https://example.com/image.png)
+![xNote](https://raw.githubusercontent.com/xanmoy/xnote/main/media/Screenshot%20from%202024-07-29%2004-12-04.png)
 
-![xNote](https://example.com/image.png)
+![xNote](https://raw.githubusercontent.com/xanmoy/xnote/main/media/Screenshot%20from%202024-07-29%2004-12-18.png)
 
 xNote is a simple text editor built with C and GTK3. It features basic text editing capabilities, such as opening and saving files.
 
