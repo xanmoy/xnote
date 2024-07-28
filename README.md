@@ -80,7 +80,7 @@ make clean
 xnote.c: Main source code file for the text editor.
 Makefile: Build instructions for the project.
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the [MIT License](https://github.com/xanmoy/xnote/blob/main/LICENSE) - see the LICENSE file for details.
 
 ## Contributing
 Fork the repository.
