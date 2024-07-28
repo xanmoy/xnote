@@ -24,24 +24,38 @@ void on_open_file(GtkWidget *widget, gpointer window)
 
         filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
         file = fopen(filename, "r");
-        fseek(file, 0, SEEK_END);
-        length = ftell(file);
-        fseek(file, 0, SEEK_SET);
-        content = (char *)malloc(length + 1);
-        fread(content, 1, length, file);
-        content[length] = '\0';
-        fclose(file);
-
-        buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
-        gtk_text_buffer_set_text(buffer, content, -1);
-
-        if (current_file)
+        if (file)
         {
-            g_free(current_file);
-        }
-        current_file = g_strdup(filename);
+            fseek(file, 0, SEEK_END);
+            length = ftell(file);
+            fseek(file, 0, SEEK_SET);
+            content = (char *)malloc(length + 1);
+            if (content)
+            {
+                fread(content, 1, length, file);
+                content[length] = '\0';
+                fclose(file);
 
-        free(content);
+                buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+                gtk_text_buffer_set_text(buffer, content, -1);
+
+                if (current_file)
+                {
+                    g_free(current_file);
+                }
+                current_file = g_strdup(filename);
+
+                free(content);
+            }
+            else
+            {
+                g_printerr("Failed to allocate memory for file content\n");
+            }
+        }
+        else
+        {
+            g_printerr("Failed to open file %s\n", filename);
+        }
         g_free(filename);
     }
 
@@ -124,9 +138,16 @@ void on_quit(GtkWidget *widget, gpointer window)
 
 void on_new_window(GtkWidget *widget, gpointer window)
 {
-    int argc = 0;
-    char **argv = NULL;
-    main(argc, argv); // Open a new instance of the application
+    gchar *argv[] = {g_strdup("xnote"), NULL};
+    GError *error = NULL;
+    GSpawnFlags flags = G_SPAWN_SEARCH_PATH;
+    g_spawn_async(NULL, argv, NULL, flags, NULL, NULL, NULL, &error);
+    if (error)
+    {
+        g_printerr("Failed to open new window: %s\n", error->message);
+        g_error_free(error);
+    }
+    g_free(argv[0]);
 }
 
 void on_toggle_day_night_mode(GtkWidget *widget, gpointer window)
@@ -137,22 +158,34 @@ void on_toggle_day_night_mode(GtkWidget *widget, gpointer window)
     dark_mode = !dark_mode;
 }
 
+void update_font_size(GtkWidget *widget, int change)
+{
+    static GtkCssProvider *provider = NULL;
+    static guint id = 0;
+    static int font_size = 12; // Default font size
+
+    if (provider == NULL)
+    {
+        provider = gtk_css_provider_new();
+        gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+                                                  GTK_STYLE_PROVIDER(provider),
+                                                  GTK_STYLE_PROVIDER_PRIORITY_USER);
+    }
+
+    font_size += change;
+    gchar *css = g_strdup_printf("GtkTextView { font-size: %dpt; }", font_size);
+    gtk_css_provider_load_from_data(provider, css, -1, NULL);
+    g_free(css);
+}
+
 void on_increase_font_size(GtkWidget *widget, gpointer window)
 {
-    PangoFontDescription *font_desc;
-    font_desc = pango_font_description_copy(gtk_widget_get_style_context(text_view)->font_desc);
-    pango_font_description_set_size(font_desc, pango_font_description_get_size(font_desc) + PANGO_SCALE);
-    gtk_widget_override_font(text_view, font_desc);
-    pango_font_description_free(font_desc);
+    update_font_size(text_view, 2); // Increase font size
 }
 
 void on_decrease_font_size(GtkWidget *widget, gpointer window)
 {
-    PangoFontDescription *font_desc;
-    font_desc = pango_font_description_copy(gtk_widget_get_style_context(text_view)->font_desc);
-    pango_font_description_set_size(font_desc, pango_font_description_get_size(font_desc) - PANGO_SCALE);
-    gtk_widget_override_font(text_view, font_desc);
-    pango_font_description_free(font_desc);
+    update_font_size(text_view, -2); // Decrease font size
 }
 
 int main(int argc, char *argv[])
